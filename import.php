@@ -74,6 +74,9 @@
 		$oop = new Validation($_POST['judging_roundid']); 
 		$oop->valid($_POST['judge_email'],$_POST['firstname'],$_POST['lastname'], $_POST['import_processor_id']);
 
+		$sms = $oop->showError($_POST['import_processor_id']);
+		var_dump($sms);die();
+
 	}
 	
 	

@@ -81,12 +81,12 @@
 	    	if(is_null(mysqli_fetch_row($result))){
 	    		$sql = "Insert into judgings (user_id, round_id) VALUES ('$userId', '$roundId')";
 	    		if(mysqli_query($this->con, $sql)  == TRUE){
-	    			return "Successful Data Saving";
+	    			return true;
 	    		}else{
 	    			return "Failed Data Saving";
 	    		}
 	    	}else {
-	    		return "User already exist";
+	    		return false;
 	    	} 
 
 	    }
@@ -98,6 +98,14 @@
 	    	}else{
 	    		return "Failed Updating Stuatus";
 	    	}
+
+	    }
+
+	    public function showError($id){
+
+	    	$sql = "Select extra, status from import_temps where import_processor_id = '$id'";
+	    	$result = mysqli_query($this->con, $sql);
+	    	return mysqli_fetch_all($result);
 
 	    }
 

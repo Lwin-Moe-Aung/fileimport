@@ -14,6 +14,7 @@
 	  	public function valid($jude_email, $fastname, $lastname, $id){
 
     		$data = $this->dbobj->getAllRow($id);
+    		$completeStatus = 2;
     		$vStatus = 3;
     		$eStatus = 4;
 
@@ -22,21 +23,21 @@
     			$cols = json_decode($value[1], true);
     			if(!self::fastNameValidaton($cols[$fastname])){
     				self::errorChangeStatus($value[0], $vStatus);
-    				//break;
+    				
     			}elseif (!self::lastNameValidation($cols[$lastname])) {
     				self::errorChangeStatus($value[0], $vStatus);
-    				//change stauts
-    				//break;
+    				
     			}elseif (!self::emailValidation($cols[$jude_email])) {
     				self::errorChangeStatus($value[0], $vStatus);
-    				//change status
-    				//break;
-    			}elseif(self::saveData($cols[$fastname], $cols[$lastname], $cols[$jude_email]) == "User already exist"){
-    				self::errorChangeStatus($value[0], $eStatus);
-    			}
 
+    			}elseif(!self::saveData($cols[$fastname], $cols[$lastname], $cols[$jude_email]) ){
+    				self::errorChangeStatus($value[0], $eStatus);
+
+    			}else{
+    				self::errorChangeStatus($value[0], $completeStatus);
+
+    			}
     		}
-    		die();	
 		}
 		/*
 		*  fastname validaiton
@@ -106,6 +107,36 @@
 		public function errorChangeStatus($id, $status){
 
 			$id = $this->dbobj->errorChangeStatus($id, $status);
+
+		}
+
+		/*
+		* show error massage
+		*/
+		public function showError($id){
+			$two= $three= $four = "row";
+			$errorMessage = "";
+			$data = $this->dbobj->showError($id);
+			foreach ($data as $key => $value) {
+				$data = json_decode($value[0], true);
+				if ($value[1] == 3) {
+					$three .= $data['row'].',';
+				}elseif ($value[1] == 4) {
+					$four .= $data['row'].',';
+				}else{
+					$two .= $data['row'].',';
+				}
+			}
+			if($two != "row"){
+				$errorMessage .= $two.'Successfully save'.'  ';
+			}
+			if($three != "row"){
+				$errorMessage .= $three.'validation error'.'  ';
+			}
+			if ($four != "row") {
+				$errorMessage .= $four.'already exit'.'  ';
+			}
+			return $errorMessage;			
 
 		}
 	   
